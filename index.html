@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Michael's Operating System Roadmap</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;0,9..144,900;1,9..144,300;1,9..144,400;1,9..144,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --charcoal: #1c1917;
+    --charcoal-soft: #292524;
+    --warm-white: #faf9f7;
+    --warm-cream: #f5f3ef;
+    --warm-cream-deep: #ece8e1;
+
+    --amber: #d97706;
+    --amber-light: #fbbf24;
+    --amber-glow: rgba(217, 119, 6, 0.08);
+    --amber-warm: rgba(217, 119, 6, 0.04);
+
+    --teal: #0f766e;
+    --teal-light: #14b8a6;
+    --teal-muted: rgba(15, 118, 110, 0.08);
+
+    --rose: #be123c;
+    --rose-muted: rgba(190, 18, 60, 0.08);
+
+    --stone-200: #e7e5e4;
+    --stone-300: #d6d3d1;
+    --stone-400: #a8a29e;
+    --stone-500: #78716c;
+    --stone-600: #57534e;
+
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 40px;
+    --space-xl: 64px;
+    --space-2xl: 96px;
+
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--warm-cream);
+    color: var(--charcoal);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    /* Subtle noise grain for warmth */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-2xl) var(--space-md);
+  }
+
+  /* ===== HERO — big, warm, confident ===== */
+  .hero {
+    margin-bottom: var(--space-xl);
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: var(--space-sm);
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 5rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1.0;
+    color: var(--charcoal);
+    margin-bottom: var(--space-sm);
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--stone-500);
+  }
+
+  .hero-rule {
+    width: 64px;
+    height: 3px;
+    background: var(--amber);
+    border: none;
+    margin-top: var(--space-md);
+    border-radius: 2px;
+  }
+
+  /* ===== SECTION STRUCTURE ===== */
+  .section {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .section-label {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--stone-400);
+    margin-bottom: var(--space-md);
+  }
+
+  /* ===== ROADMAP GRID — tiles layout ===== */
+
+  /* Column headers — separate row above the grid */
+  .grid-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-left: 200px;
+    margin-bottom: 12px;
+  }
+
+  .col-header {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0 4px;
+  }
+
+  .col-header.h-now { color: var(--amber); }
+  .col-header.h-next { color: var(--teal); }
+  .col-header.h-later { color: var(--stone-500); }
+
+  .col-header .col-sub {
+    display: block;
+    font-weight: 400;
+    font-size: 0.68rem;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.6;
+    margin-top: 1px;
+  }
+
+  /* One row per layer */
+  .roadmap-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* Row label */
+  .row-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: var(--space-md) var(--space-sm) var(--space-md) 0;
+  }
+
+  .row-label .icon {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+  }
+
+  .row-label .name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .row-label .desc {
+    font-size: 0.72rem;
+    color: var(--stone-500);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* ===== TILES — the interactive cards ===== */
+  .tile {
+    background: var(--warm-white);
+    border-radius: 14px;
+    padding: var(--space-md);
+    cursor: pointer;
+    position: relative;
+    transition:
+      transform 0.3s var(--ease-out),
+      box-shadow 0.3s var(--ease-out),
+      background 0.3s var(--ease-smooth);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    overflow: hidden;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 14px 14px 0 0;
+    transition: height 0.3s var(--ease-out);
+  }
+
+  .tile.now::before { background: var(--amber); }
+  .tile.next::before { background: var(--teal); }
+  .tile.later::before { background: var(--stone-400); }
+
+  .tile:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 4px 12px rgba(0,0,0,0.06),
+      0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .tile:hover::before {
+    height: 4px;
+  }
+
+  .tile.now:hover { background: #fffdf8; }
+  .tile.next:hover { background: #f8fffe; }
+  .tile.later:hover { background: #fefdfb; }
+
+  /* Active/expanded state */
+  .tile.expanded {
+    box-shadow:
+      0 8px 24px rgba(0,0,0,0.08),
+      0 2px 6px rgba(0,0,0,0.04);
+  }
+
+  /* Tag pill */
+  .tile-tag {
+    display: inline-block;
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+    width: fit-content;
+  }
+
+  .tile.now .tile-tag {
+    background: var(--amber-glow);
+    color: var(--amber);
+  }
+  .tile.next .tile-tag {
+    background: var(--teal-muted);
+    color: var(--teal);
+  }
+  .tile.later .tile-tag {
+    background: var(--warm-cream-deep);
+    color: var(--stone-600);
+  }
+
+  /* THE HEADLINE — big, bold, the poster moment */
+  .tile-headline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--charcoal);
+    flex: 1;
+  }
+
+  .tile.later .tile-headline {
+    font-weight: 600;
+    color: var(--charcoal);
+  }
+
+  /* Expand hint */
+  .tile-hint {
+    font-size: 0.65rem;
+    color: var(--stone-400);
+    margin-top: 12px;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .tile-hint .arrow {
+    display: inline-block;
+    transition: transform 0.3s var(--ease-out);
+    font-size: 0.8rem;
+    line-height: 1;
+  }
+
+  .tile.expanded .tile-hint .arrow {
+    transform: rotate(90deg);
+  }
+
+  .tile:hover .tile-hint {
+    color: var(--stone-500);
+  }
+
+  /* DETAIL PANEL — revealed on click */
+  .tile-detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s var(--ease-out), opacity 0.3s var(--ease-smooth), margin 0.3s var(--ease-out);
+    opacity: 0;
+    margin-top: 0;
+  }
+
+  .tile.expanded .tile-detail {
+    max-height: 600px;
+    opacity: 1;
+    margin-top: 16px;
+  }
+
+  .tile-detail-inner {
+    padding-top: 16px;
+    border-top: 1px solid var(--stone-200);
+  }
+
+  /* Detail content styles */
+  .tile-detail ul {
+    padding-left: 16px;
+    margin-top: 6px;
+  }
+
+  .tile-detail li {
+    margin-bottom: 5px;
+    font-size: 0.82rem;
+    color: var(--charcoal-soft);
+    line-height: 1.5;
+  }
+
+  .tile-detail li::marker {
+    color: var(--stone-400);
+  }
+
+  /* Opportunity quotes — the Torres voice */
+  .quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--charcoal-soft);
+    padding: 12px 16px;
+    margin: 8px 0 12px;
+    background: var(--teal-muted);
+    border-left: 3px solid var(--teal);
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* Future-voice quotes — the transformation */
+  .quote-future {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--charcoal);
+    padding: 12px 16px;
+    margin: 10px 0 0;
+    background: var(--amber-glow);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* Outcome metric */
+  .outcome-metric {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.86rem;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+
+  .outcome-note {
+    font-size: 0.73rem;
+    color: var(--stone-500);
+    line-height: 1.4;
+  }
+
+
+  /* ===== INSIGHT SECTION ===== */
+  .insight-section {
+    background: var(--warm-white);
+    border-radius: 16px;
+    padding: var(--space-lg) var(--space-lg);
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.04),
+      0 4px 16px rgba(0,0,0,0.06);
+    border-top: 3px solid var(--amber);
+  }
+
+  .insight-section h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--space-sm);
+    color: var(--charcoal);
+    line-height: 1.15;
+  }
+
+  .insight-section p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--stone-600);
+    margin-bottom: 14px;
+    max-width: 680px;
+  }
+
+  .insight-section .highlight {
+    font-weight: 600;
+    color: var(--amber);
+  }
+
+  /* ===== MATURITY TABLE ===== */
+  .maturity-section {
+    background: var(--warm-white);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.04),
+      0 4px 16px rgba(0,0,0,0.06);
+  }
+
+  .maturity-section h2 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 800;
+    padding: var(--space-md) var(--space-lg);
+    letter-spacing: -0.02em;
+  }
+
+  .maturity-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  .maturity-table th {
+    background: var(--warm-cream);
+    padding: 12px var(--space-md);
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--stone-500);
+    border-bottom: 1px solid var(--stone-200);
+  }
+
+  .maturity-table td {
+    padding: 14px var(--space-md);
+    border-bottom: 1px solid var(--warm-cream);
+    vertical-align: top;
+    line-height: 1.5;
+    transition: background 0.2s;
+  }
+
+  .maturity-table tr:hover td {
+    background: var(--amber-warm);
+  }
+
+  .maturity-table tr:last-child td { border-bottom: none; }
+
+  .level-num {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--stone-400);
+  }
+
+  .idea-state {
+    font-weight: 500;
+    color: var(--charcoal);
+  }
+
+  .the-ask {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--stone-600);
+  }
+
+  .strength { color: var(--teal); font-weight: 600; }
+  .gap { color: var(--rose); font-weight: 600; }
+  .unknown { color: var(--stone-500); font-weight: 600; }
+
+  /* ===== SPIRAL VISUALIZATION ===== */
+  .spiral-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+
+  .spiral-text h2 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .spiral-legend {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--stone-600);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .spiral-hover-label {
+    margin-top: var(--space-sm);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.88rem;
+    color: var(--stone-400);
+    min-height: 3.6em;
+    transition: color 0.3s;
+    line-height: 1.4;
+  }
+
+  .spiral-hover-label.active {
+    color: var(--charcoal);
+  }
+
+  .spiral-viz {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .spiral-viz svg {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+  }
+
+  /* Spiral SVG interactive styles */
+  .spiral-ring {
+    fill: none;
+    stroke-width: 14;
+    stroke-linecap: round;
+    opacity: 0.18;
+    transition: opacity 0.4s var(--ease-smooth), stroke-width 0.3s var(--ease-out);
+    cursor: pointer;
+  }
+
+  .spiral-ring.highlighted {
+    opacity: 0.85;
+    stroke-width: 18;
+  }
+
+  .spiral-ring.dimmed {
+    opacity: 0.07;
+  }
+
+  .spiral-level-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    fill: var(--stone-400);
+    text-anchor: middle;
+    transition: fill 0.3s;
+    cursor: pointer;
+  }
+
+  .spiral-level-label.highlighted {
+    fill: var(--charcoal);
+  }
+
+  .spiral-level-dot {
+    fill: var(--warm-cream);
+    stroke: var(--stone-300);
+    stroke-width: 1.5;
+    transition: all 0.3s var(--ease-out);
+    cursor: pointer;
+  }
+
+  .spiral-level-dot.highlighted {
+    fill: var(--amber);
+    stroke: var(--amber);
+    r: 6;
+  }
+
+  .spiral-center-text {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 12px;
+    font-weight: 600;
+    fill: var(--stone-400);
+    text-anchor: middle;
+  }
+
+  @media (max-width: 900px) {
+    .spiral-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .spiral-viz {
+      order: -1;
+    }
+
+    .spiral-viz svg {
+      max-width: 300px;
+    }
+  }
+
+  /* ===== VALLEY CHART ===== */
+  .valley-subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 0.92rem;
+    color: var(--stone-500);
+    padding: 0 var(--space-lg);
+    margin-bottom: var(--space-md);
+  }
+
+  .valley-chart-container {
+    padding: var(--space-sm) var(--space-lg) var(--space-md);
+  }
+
+  .valley-chart-container svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .valley-bar {
+    transition: opacity 0.3s, rx 0.3s;
+    cursor: pointer;
+  }
+
+  .valley-bar.dimmed {
+    opacity: 0.3;
+  }
+
+  .valley-label {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 800;
+    text-anchor: middle;
+    transition: opacity 0.3s;
+  }
+
+  .valley-label.dimmed {
+    opacity: 0.3;
+  }
+
+  .valley-strength-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    text-anchor: middle;
+    transition: opacity 0.3s;
+  }
+
+  .valley-strength-label.dimmed {
+    opacity: 0.3;
+  }
+
+  .valley-zone-label {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 300;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+
+  .maturity-table tr.valley-highlight td {
+    background: var(--amber-warm);
+  }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger children within a row */
+  .roadmap-row .tile.reveal:nth-child(2) { transition-delay: 0.05s; }
+  .roadmap-row .tile.reveal:nth-child(3) { transition-delay: 0.1s; }
+  .roadmap-row .tile.reveal:nth-child(4) { transition-delay: 0.15s; }
+
+  /* ===== FOOTER ===== */
+  .page-footer {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--stone-200);
+    font-size: 0.72rem;
+    color: var(--stone-400);
+    text-align: center;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .grid-columns {
+      display: none;
+    }
+
+    .roadmap-row {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: var(--space-md);
+    }
+
+    .row-label {
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      padding: var(--space-sm) 0;
+    }
+
+    .row-label .icon { margin-bottom: 0; }
+
+    /* Show column label inside tile on mobile */
+    .tile .mobile-col-label {
+      display: block;
+    }
+
+    .page {
+      padding: var(--space-lg) var(--space-sm);
+    }
+
+    .insight-section {
+      padding: var(--space-md);
+    }
+  }
+
+  @media (min-width: 901px) {
+    .tile .mobile-col-label {
+      display: none;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-eyebrow">Personal Operating System</div>
+    <h1>Michael's Roadmap</h1>
+    <p class="hero-subtitle">Solutions now. Opportunities next. Outcomes later.</p>
+    <hr class="hero-rule">
+  </header>
+
+  <!-- Roadmap -->
+  <section class="section">
+    <div class="section-label">The Roadmap</div>
+
+    <!-- Column headers -->
+    <div class="grid-columns">
+      <div class="col-header h-now">Now <span class="col-sub">solutions in flight</span></div>
+      <div class="col-header h-next">Next <span class="col-sub">opportunities</span></div>
+      <div class="col-header h-later">Later <span class="col-sub">outcomes</span></div>
+    </div>
+
+    <!-- Row 1: Capture -->
+    <div class="roadmap-row">
+      <div class="row-label">
+        <div class="icon">&#x1f4e1;</div>
+        <div>
+          <div class="name">Capture</div>
+          <div class="desc">Signal &rarr; persistent system</div>
+        </div>
+      </div>
+
+      <div class="tile now reveal" onclick="toggleTile(this)">
+        <div class="tile-tag">In flight</div>
+        <div class="mobile-col-label col-header h-now" style="margin-bottom:8px; padding:0;">Now</div>
+        <div class="tile-headline">Building the inbox my brain never had</div>
+        <div class="tile-hint"><span class="arrow">&#x25B8;</span> details</div>
+        <div class="tile-detail">
+          <div class="tile-detail-inner">
+            <ul>
+              <li>Bounded context folder architecture</li>
+              <li>Stubs for all missing documents</li>
+              <li>Session capture file as PRD</li>
+              <li>Intake folder as landing zone</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="tile next reveal" onclick="toggleTile(this)">
+        <div class="tile-tag">Opportunity</div>
+        <div class="mobile-col-label col-header h-next" style="margin-bottom:8px; padding:0;">Next</div>
+        <div class="tile-headline">The meeting ends. The system remembers.</div>
+        <div class="tile-hint"><span class="arrow">&#x25B8;</span> details</div>
+        <div class="tile-detail">
+          <div class="tile-detail-inner">
+            <div class="quote">"My synthesis decays because there's no triggered workflow after meetings. I just... forget."</div>
+            <ul>
+              <li>Granola MCP integration</li>
+              <li>Post-meeting proactive prompts</li>
+              <li>Automated stakeholder map updates</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="tile later reveal" onclick="toggleTile(this)">
+        <div class="tile-tag">Outcome</div>
+        <div class="mobile-col-label col-header h-later" style="margin-bottom:8px; padding:0;">Later</div>
+        <div class="tile-headline">My brain has backup now.</div>
+        <div class="tile-hint"><span class="arrow">&#x25B8;</span> details</div>
+        <div class="tile-detail">
+          <div class="tile-detail-inner">
+            <div class="outcome-metric">60% of meeting insights captured within 24h</div>
+            <div class="outcome-note">Currently ~10%. The Apr 8 reboot was an outlier burst.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Development -->
+    <div class="roadmap-row">
+      <div class="row-label">
+        <div class="icon">&#x1f9ea;</div>
+        <div>
+          <div class="name">Development</div>
+          <div class="desc">Raw &rarr; ready</div>
+        </div>
+      </div>
+
+      <div class="tile now reveal" onclick="toggleTile(this)">
+        <div class="tile-tag">In flight</div>
+        <div class="mobile-col-label col-header h-now" style="margin-bottom:8px; padding:0;">Now</div>
+        <div class="tile-headline">Merging the pile into a pipeline</div>
+        <div class="tile-hint"><span class="arrow">&#x25B8;</span> details</div>
+        <div class="tile-detail">
+          <div class="tile-detail-inner">
+            <ul>
+              <li>Groom real options backlog (merge old + new)</li>
+              <li>Define maturity levels for items</li>
+              <li>State.md as cross-context dashboard</li>
+              <li>Ceremony protocols (daily/weekly)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="tile next reveal" onclick="toggleTile(this)">
+        <div class="tile-tag">Opportunity</div>
+        <div class="mobile-col-label col-header h-next" style="margin-bottom:8px; padding:0;">Next</div>
+        <div class="tile-headline">What does "ready" even look like?</div>
+        <div class="tile-hint"><span class="arrow">&#x25B8;</span> details</div>
+        <div class="tile-detail">
+          <div class="tile-detail-inner">
+            <div class="quote">"I don't know what 'ready for exposure' looks like. I have a concept and a too-big grand vision, but nothing in between."</div>
+            <ul>
+              <li>Maturity templates per item type</li>
+              <li>Progressive value emergence tracking</li>
+              <li>"Vertical slice" thinking as a practice</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="tile later reveal" onclick="toggleTile(this)">
+        <div class="tile-tag">Outcome</div>
+        <div class="mobile-col-label col-header h-later" style="margin-bottom:8px; padding:0;">Later</div>
+        <div class="tile-headline">Nothing stuck. Everything moving.</div>
+        <div class="tile-hint"><span class="arrow">&#x25B8;</span> details</div>
+        <div class="tile-detail">
+          <div class="tile-detail-inner">
+            <div class="outcome-metric">Every active item has a defined next step AND a "ready for exposure" threshold</div>
+            <div class="outcome-note">Not binary done/not-done. Not "perfect or unfinished."</div>
+            <div class="quote-future">"Everything I'm working on has a next move. Nothing is stuck in the lab pretending to need more polish."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3: Exposure -->
+    <div class="roadmap-row">
+      <div class="row-label">
+        <div class="icon">&#x1f4ac;</div>
+        <div>
+          <div class="name">Exposure</div>
+          <div class="desc">Lab &rarr; world</div>
+        </div>
+      </div>
+
+      <div class="tile now reveal" onclick="toggleTile(this)">
+        <div class="tile-tag">In flight</div>
+        <div class="mobile-col-label col-header h-now" style="margin-bottom:8px; padding:0;">Now</div>
+        <div class="tile-headline">Showing up before I feel ready</div>
+        <div class="tile-hint"><span class="arrow">&#x25B8;</span> details</div>
+        <div class="tile-detail">
+          <div class="tile-detail-inner">
+            <ul>
+              <li>Showing up as product lead in standups</li>
+              <li>Institutional role JD translation</li>
+              <li>Acting as if on EDL team</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="tile next reveal" onclick="toggleTile(this)">
+        <div class="tile-tag">Opportunity</div>
+        <div class="mobile-col-label col-header h-next" style="margin-bottom:8px; padding:0;">Next</div>
+        <div class="tile-headline">Finding the sandbox I never had</div>
+        <div class="tile-hint"><span class="arrow">&#x25B8;</span> details</div>
+        <div class="tile-detail">
+          <div class="tile-detail-inner">
+            <div class="quote">"I don't know what incremental validation looks like. I have no sandbox. Everything feels high-risk because by the time I consider sharing, it's been in the lab too long."</div>
+            <ul>
+              <li>Define exposure levels + audiences + asks</li>
+              <li>Low-stakes sharing practice (Level 2-3 reps)</li>
+              <li>Wayne "socialization" as a learnable pattern</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="tile later reveal" onclick="toggleTile(this)">
+        <div class="tile-tag">Outcome</div>
+        <div class="mobile-col-label col-header h-later" style="margin-bottom:8px; padding:0;">Later</div>
+        <div class="tile-headline">My ideas live in the world now.</div>
+        <div class="tile-hint"><span class="arrow">&#x25B8;</span> details</div>
+        <div class="tile-detail">
+          <div class="tile-detail-inner">
+            <div class="outcome-metric">Repeatable practice of sharing WIP at each maturity level with defined audiences</div>
+            <div class="outcome-note">Upstream: 3-5 transformation stories with attributable outcomes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Insight + Spiral -->
+  <section class="section">
+    <div class="insight-section spiral-layout reveal">
+      <div class="spiral-text">
+        <h2>It's Not a Pipeline.<br>It's a Spiral.</h2>
+        <p>Capture, Development, and Exposure aren't three sequential phases. They're <span class="highlight">three activities that happen together at every maturity level</span>.</p>
+        <p>At Level 0, you capture a signal, shape it in two sentences, and expose it to an AI. At Level 3, you capture feedback, reshape a draft, and run it past a stakeholder informally.</p>
+        <p>The biggest gain? <span class="highlight">Building the exposure reps at Levels 2–3</span> — the informal, low-stakes, inquiry-framed sharing that Wayne calls "socializing." That's the missing muscle.</p>
+        <div class="spiral-legend">
+          <span class="legend-item"><span class="legend-dot" style="background: var(--amber);"></span> Capture</span>
+          <span class="legend-item"><span class="legend-dot" style="background: var(--teal);"></span> Development</span>
+          <span class="legend-item"><span class="legend-dot" style="background: var(--rose);"></span> Exposure</span>
+        </div>
+        <div class="spiral-hover-label" id="spiralLabel">Hover a level to explore</div>
+      </div>
+      <div class="spiral-viz">
+        <svg id="spiralSvg" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+          <!-- Will be drawn by JS -->
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Maturity Valley -->
+  <section class="section">
+    <div class="maturity-section reveal">
+      <h2>The Valley</h2>
+      <p class="valley-subtitle">Where you're strong. Where the gap lives. The shape of the work.</p>
+
+      <!-- Valley Chart -->
+      <div class="valley-chart-container">
+        <svg id="valleyChart" viewBox="0 0 660 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        </svg>
+      </div>
+
+      <!-- Table (detail layer) -->
+      <table class="maturity-table">
+        <thead>
+          <tr>
+            <th style="width:50px">Level</th>
+            <th>Idea State</th>
+            <th>Exposure Target</th>
+            <th>The Ask</th>
+            <th>Your Current Strength</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-valley-level="0">
+            <td><span class="level-num">0</span></td>
+            <td><span class="idea-state">Raw signal</span></td>
+            <td>AI (Claude, Granola)</td>
+            <td><span class="the-ask">"Is there something here?"</span></td>
+            <td><span class="strength">Strong</span> — you do this constantly</td>
+          </tr>
+          <tr data-valley-level="1">
+            <td><span class="level-num">1</span></td>
+            <td><span class="idea-state">Causal statement</span></td>
+            <td>Persistent system (file)</td>
+            <td><span class="the-ask">"I can find this again"</span></td>
+            <td><span class="gap">Weak</span> — the capture gap</td>
+          </tr>
+          <tr data-valley-level="2">
+            <td><span class="level-num">2</span></td>
+            <td><span class="idea-state">Sketch / frame</span></td>
+            <td>Trusted peer, informal</td>
+            <td><span class="the-ask">"Am I reading this right?"</span></td>
+            <td><span class="gap">Barely exists</span> — the missing reps</td>
+          </tr>
+          <tr data-valley-level="3">
+            <td><span class="level-num">3</span></td>
+            <td><span class="idea-state">Draft / rough shape</span></td>
+            <td>Stakeholder, low-stakes</td>
+            <td><span class="the-ask">"I'm thinking about X. What am I missing?"</span></td>
+            <td><span class="gap">Barely exists</span> — the missing reps</td>
+          </tr>
+          <tr data-valley-level="4">
+            <td><span class="level-num">4</span></td>
+            <td><span class="idea-state">Prototype / positioned</span></td>
+            <td>Target audience, formal</td>
+            <td><span class="the-ask">"Here's a proposal. Poke holes."</span></td>
+            <td><span class="unknown">Rare</span> — only under deadline pressure</td>
+          </tr>
+          <tr data-valley-level="5">
+            <td><span class="level-num">5</span></td>
+            <td><span class="idea-state">Validated / ready</span></td>
+            <td>Decision-maker</td>
+            <td><span class="the-ask">"Here's what we should do and why."</span></td>
+            <td><span class="strength">Strong when reached</span> — natural presenter</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    v2 — April 9, 2026 — derived from Torres OST + N/N/L framework
+  </footer>
+
+</div>
+
+<script>
+  // === Tile expand/collapse ===
+  function toggleTile(tile) {
+    const wasExpanded = tile.classList.contains('expanded');
+    const row = tile.closest('.roadmap-row');
+    if (row) {
+      row.querySelectorAll('.tile.expanded').forEach(t => t.classList.remove('expanded'));
+    }
+    if (!wasExpanded) tile.classList.add('expanded');
+  }
+
+  // === Spiral Visualization ===
+  (function() {
+    const svg = document.getElementById('spiralSvg');
+    const label = document.getElementById('spiralLabel');
+    if (!svg) return;
+
+    const cx = 210, cy = 210;
+    const layers = [
+      { name: 'Capture',     color: '#d97706' },
+      { name: 'Development', color: '#0f766e' },
+      { name: 'Exposure',    color: '#be123c' },
+    ];
+
+    const levels = [
+      { n: 0, state: 'Raw signal',             target: 'AI (Claude)',           ask: '"Is there something here?"' },
+      { n: 1, state: 'Causal statement',        target: 'Persistent system',     ask: '"I can find this again"' },
+      { n: 2, state: 'Sketch / frame',          target: 'Trusted peer',          ask: '"Am I reading this right?"' },
+      { n: 3, state: 'Draft / rough shape',     target: 'Stakeholder, low-stakes', ask: '"What am I missing?"' },
+      { n: 4, state: 'Prototype / positioned',  target: 'Target audience',       ask: '"Poke holes."' },
+      { n: 5, state: 'Validated / ready',       target: 'Decision-maker',        ask: '"Here\'s what we should do."' },
+    ];
+
+    // Radii for 6 concentric rings (level 0 = innermost)
+    const rMin = 42, rMax = 185;
+    const radii = levels.map((_, i) => rMin + (rMax - rMin) * (i / (levels.length - 1)));
+
+    // Draw concentric level rings (subtle)
+    levels.forEach((lev, i) => {
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('cx', cx);
+      circle.setAttribute('cy', cy);
+      circle.setAttribute('r', radii[i]);
+      circle.setAttribute('fill', 'none');
+      circle.setAttribute('stroke', '#e7e5e4');
+      circle.setAttribute('stroke-width', '1');
+      circle.setAttribute('stroke-dasharray', '3,6');
+      svg.appendChild(circle);
+    });
+
+    // Draw the three spiral arcs — each layer spirals outward through levels
+    // Each arc spans from innermost to outermost, offset by 120 degrees
+    const arcElements = [];
+
+    layers.forEach((layer, li) => {
+      const offsetAngle = (li * 2 * Math.PI) / 3; // 0, 120, 240 deg
+      const segments = [];
+
+      // Create a spiral path from level 0 to level 5
+      // Each full "loop" around corresponds to moving through levels
+      const points = [];
+      const steps = 120;
+      for (let s = 0; s <= steps; s++) {
+        const t = s / steps; // 0 to 1
+        const angle = offsetAngle + t * Math.PI * 1.8; // ~324 degrees of sweep
+        const r = rMin + t * (rMax - rMin);
+        const x = cx + r * Math.cos(angle - Math.PI / 2);
+        const y = cy + r * Math.sin(angle - Math.PI / 2);
+        points.push({ x, y, t });
+      }
+
+      // Build SVG path
+      let d = `M ${points[0].x} ${points[0].y}`;
+      for (let i = 1; i < points.length; i++) {
+        d += ` L ${points[i].x} ${points[i].y}`;
+      }
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('stroke', layer.color);
+      path.setAttribute('class', 'spiral-ring');
+      path.setAttribute('data-layer', li);
+      path.style.strokeWidth = '10';
+      path.style.opacity = '0.25';
+
+      // Animate the drawing
+      const pathLength = path.getTotalLength ? 0 : 0; // will set after append
+      svg.appendChild(path);
+
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = len;
+      path.style.transition = 'none';
+
+      // Trigger draw animation
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          path.style.transition = `stroke-dashoffset 1.8s ${li * 0.3}s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, stroke-width 0.3s ease`;
+          path.style.strokeDashoffset = '0';
+        });
+      });
+
+      arcElements.push(path);
+    });
+
+    // Level markers — dots at each level on each spiral arm
+    const dotGroups = []; // dotGroups[levelIndex] = [dot, dot, dot]
+
+    levels.forEach((lev, li) => {
+      const dots = [];
+      dotGroups.push(dots);
+
+      layers.forEach((layer, ai) => {
+        const offsetAngle = (ai * 2 * Math.PI) / 3;
+        const t = li / (levels.length - 1);
+        const angle = offsetAngle + t * Math.PI * 1.8;
+        const r = radii[li];
+        const x = cx + r * Math.cos(angle - Math.PI / 2);
+        const y = cy + r * Math.sin(angle - Math.PI / 2);
+
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', x);
+        dot.setAttribute('cy', y);
+        dot.setAttribute('r', '4.5');
+        dot.setAttribute('class', 'spiral-level-dot');
+        dot.setAttribute('data-level', li);
+        dot.style.fill = '#faf9f7';
+        dot.style.stroke = layer.color;
+        dot.style.strokeWidth = '2';
+        dot.style.opacity = '0';
+        dot.style.transition = `opacity 0.5s ${0.6 + li * 0.12}s ease, r 0.3s ease, fill 0.3s ease`;
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            dot.style.opacity = '1';
+          });
+        });
+
+        svg.appendChild(dot);
+        dots.push(dot);
+      });
+    });
+
+    // Level number labels (around the outside)
+    levels.forEach((lev, li) => {
+      const angle = -Math.PI / 2 + (li / (levels.length - 1)) * 0.3; // slight arc along top
+      const r = radii[li];
+      // Place labels to the left of the spiral
+      const x = cx - r - 16;
+      const y = cy;
+
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', cx);
+      text.setAttribute('y', cy - r - 10);
+      text.setAttribute('class', 'spiral-level-label');
+      text.setAttribute('data-level', li);
+      text.textContent = `L${lev.n}`;
+      svg.appendChild(text);
+    });
+
+    // Center label
+    const centerText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    centerText.setAttribute('x', cx);
+    centerText.setAttribute('y', cy + 4);
+    centerText.setAttribute('class', 'spiral-center-text');
+    centerText.textContent = 'signal';
+    svg.appendChild(centerText);
+
+    // Hover interaction — highlight a level
+    function highlightLevel(levelIndex) {
+      const lev = levels[levelIndex];
+      label.innerHTML = `<strong style="color:var(--charcoal)">Level ${lev.n}: ${lev.state}</strong><br>
+        <span style="color:var(--stone-500)">${lev.target} — ${lev.ask}</span>`;
+      label.classList.add('active');
+
+      // Highlight dots at this level
+      dotGroups.forEach((dots, li) => {
+        dots.forEach(dot => {
+          if (li === levelIndex) {
+            dot.style.fill = dot.style.stroke;
+            dot.setAttribute('r', '7');
+            dot.style.opacity = '1';
+          } else {
+            dot.style.fill = '#faf9f7';
+            dot.setAttribute('r', '4.5');
+            dot.style.opacity = '0.4';
+          }
+        });
+      });
+
+      // Dim label texts
+      svg.querySelectorAll('.spiral-level-label').forEach(t => {
+        const l = parseInt(t.getAttribute('data-level'));
+        t.classList.toggle('highlighted', l === levelIndex);
+        t.style.opacity = l === levelIndex ? '1' : '0.3';
+      });
+    }
+
+    function clearHighlight() {
+      label.innerHTML = 'Hover a level to explore';
+      label.classList.remove('active');
+
+      dotGroups.forEach(dots => {
+        dots.forEach(dot => {
+          dot.style.fill = '#faf9f7';
+          dot.setAttribute('r', '4.5');
+          dot.style.opacity = '1';
+        });
+      });
+
+      svg.querySelectorAll('.spiral-level-label').forEach(t => {
+        t.classList.remove('highlighted');
+        t.style.opacity = '1';
+      });
+    }
+
+    // Attach hover events to dots and labels
+    svg.querySelectorAll('.spiral-level-dot').forEach(dot => {
+      dot.addEventListener('mouseenter', () => highlightLevel(parseInt(dot.getAttribute('data-level'))));
+      dot.addEventListener('mouseleave', clearHighlight);
+    });
+
+    svg.querySelectorAll('.spiral-level-label').forEach(text => {
+      text.addEventListener('mouseenter', () => highlightLevel(parseInt(text.getAttribute('data-level'))));
+      text.addEventListener('mouseleave', clearHighlight);
+    });
+
+  })();
+
+  // === Valley Chart ===
+  (function() {
+    const svg = document.getElementById('valleyChart');
+    if (!svg) return;
+
+    const levels = [
+      { n: 0, label: 'L0', strength: 0.85, strengthLabel: 'Strong',        color: '#0f766e' },
+      { n: 1, label: 'L1', strength: 0.30, strengthLabel: 'Weak',          color: '#be123c' },
+      { n: 2, label: 'L2', strength: 0.12, strengthLabel: 'Barely exists', color: '#be123c' },
+      { n: 3, label: 'L3', strength: 0.12, strengthLabel: 'Barely exists', color: '#be123c' },
+      { n: 4, label: 'L4', strength: 0.28, strengthLabel: 'Rare',          color: '#78716c' },
+      { n: 5, label: 'L5', strength: 0.80, strengthLabel: 'Strong',        color: '#0f766e' },
+    ];
+
+    const W = 660, H = 200;
+    const padX = 60, padTop = 24, padBot = 36;
+    const chartH = H - padTop - padBot;
+    const barW = 56;
+    const gap = (W - 2 * padX - levels.length * barW) / (levels.length - 1);
+
+    // Gradient fill for the valley zone
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+
+    // Subtle zone highlight behind levels 1-3
+    const zoneX = padX + 1 * (barW + gap) - gap * 0.3;
+    const zoneW = 3 * barW + 2 * gap + gap * 0.6;
+    const zone = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    zone.setAttribute('x', zoneX);
+    zone.setAttribute('y', padTop - 6);
+    zone.setAttribute('width', zoneW);
+    zone.setAttribute('height', chartH + 12);
+    zone.setAttribute('rx', 12);
+    zone.setAttribute('fill', 'rgba(190, 18, 60, 0.04)');
+    zone.setAttribute('stroke', 'rgba(190, 18, 60, 0.08)');
+    zone.setAttribute('stroke-width', '1');
+    zone.setAttribute('stroke-dasharray', '4,4');
+    svg.appendChild(zone);
+
+    // Zone label
+    const zoneLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    zoneLabel.setAttribute('x', zoneX + zoneW / 2);
+    zoneLabel.setAttribute('y', padTop + 6);
+    zoneLabel.setAttribute('class', 'valley-zone-label');
+    zoneLabel.setAttribute('font-size', '11');
+    zoneLabel.setAttribute('fill', '#be123c');
+    zoneLabel.setAttribute('opacity', '0.5');
+    zoneLabel.textContent = 'the missing reps';
+    svg.appendChild(zoneLabel);
+
+    // Smooth curve connecting bar tops
+    const points = levels.map((lev, i) => {
+      const x = padX + i * (barW + gap) + barW / 2;
+      const y = padTop + chartH * (1 - lev.strength);
+      return { x, y };
+    });
+
+    // Build a smooth bezier path through points
+    let pathD = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[i];
+      const p1 = points[i + 1];
+      const cpx = (p0.x + p1.x) / 2;
+      pathD += ` C ${cpx} ${p0.y}, ${cpx} ${p1.y}, ${p1.x} ${p1.y}`;
+    }
+
+    const curvePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    curvePath.setAttribute('d', pathD);
+    curvePath.setAttribute('fill', 'none');
+    curvePath.setAttribute('stroke', '#d6d3d1');
+    curvePath.setAttribute('stroke-width', '2');
+    curvePath.setAttribute('stroke-dasharray', '6,4');
+    curvePath.setAttribute('opacity', '0.6');
+    svg.appendChild(curvePath);
+
+    // Bars + labels
+    const barEls = [];
+    const labelEls = [];
+    const strengthEls = [];
+
+    levels.forEach((lev, i) => {
+      const x = padX + i * (barW + gap);
+      const barH = Math.max(8, chartH * lev.strength);
+      const y = padTop + chartH - barH;
+
+      // Bar
+      const bar = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      bar.setAttribute('x', x);
+      bar.setAttribute('y', y);
+      bar.setAttribute('width', barW);
+      bar.setAttribute('height', barH);
+      bar.setAttribute('rx', 6);
+      bar.setAttribute('fill', lev.color);
+      bar.setAttribute('opacity', '0.7');
+      bar.setAttribute('class', 'valley-bar');
+      bar.setAttribute('data-level', i);
+
+      // Animate bars growing from bottom
+      bar.style.transformOrigin = `${x + barW/2}px ${padTop + chartH}px`;
+      bar.style.transform = 'scaleY(0)';
+      bar.style.transition = `transform 0.6s ${i * 0.08}s cubic-bezier(0.16, 1, 0.3, 1)`;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          bar.style.transform = 'scaleY(1)';
+        });
+      });
+
+      svg.appendChild(bar);
+      barEls.push(bar);
+
+      // Strength label above bar
+      const sLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      sLabel.setAttribute('x', x + barW / 2);
+      sLabel.setAttribute('y', y - 8);
+      sLabel.setAttribute('class', 'valley-strength-label');
+      sLabel.setAttribute('fill', lev.color);
+      sLabel.setAttribute('data-level', i);
+      sLabel.textContent = lev.strengthLabel;
+      svg.appendChild(sLabel);
+      strengthEls.push(sLabel);
+
+      // Level label below bar
+      const lLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      lLabel.setAttribute('x', x + barW / 2);
+      lLabel.setAttribute('y', padTop + chartH + 22);
+      lLabel.setAttribute('class', 'valley-label');
+      lLabel.setAttribute('font-size', '14');
+      lLabel.setAttribute('fill', '#78716c');
+      lLabel.setAttribute('data-level', i);
+      lLabel.textContent = lev.label;
+      svg.appendChild(lLabel);
+      labelEls.push(lLabel);
+
+      // Dot on the curve
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', points[i].x);
+      dot.setAttribute('cy', points[i].y);
+      dot.setAttribute('r', '4');
+      dot.setAttribute('fill', '#faf9f7');
+      dot.setAttribute('stroke', lev.color);
+      dot.setAttribute('stroke-width', '2');
+      svg.appendChild(dot);
+    });
+
+    // Hover interaction — highlight bar + table row
+    function highlightValley(levelIndex) {
+      barEls.forEach((b, i) => b.classList.toggle('dimmed', i !== levelIndex));
+      labelEls.forEach((l, i) => l.classList.toggle('dimmed', i !== levelIndex));
+      strengthEls.forEach((s, i) => s.classList.toggle('dimmed', i !== levelIndex));
+
+      document.querySelectorAll('.maturity-table tr[data-valley-level]').forEach(tr => {
+        tr.classList.toggle('valley-highlight', tr.getAttribute('data-valley-level') == levelIndex);
+      });
+    }
+
+    function clearValley() {
+      barEls.forEach(b => b.classList.remove('dimmed'));
+      labelEls.forEach(l => l.classList.remove('dimmed'));
+      strengthEls.forEach(s => s.classList.remove('dimmed'));
+      document.querySelectorAll('.maturity-table tr.valley-highlight').forEach(tr => {
+        tr.classList.remove('valley-highlight');
+      });
+    }
+
+    barEls.forEach(bar => {
+      bar.addEventListener('mouseenter', () => highlightValley(parseInt(bar.getAttribute('data-level'))));
+      bar.addEventListener('mouseleave', clearValley);
+    });
+
+    labelEls.forEach(label => {
+      label.addEventListener('mouseenter', () => highlightValley(parseInt(label.getAttribute('data-level'))));
+      label.addEventListener('mouseleave', clearValley);
+    });
+
+    // Table row hover highlights chart too
+    document.querySelectorAll('.maturity-table tr[data-valley-level]').forEach(tr => {
+      tr.addEventListener('mouseenter', () => highlightValley(parseInt(tr.getAttribute('data-valley-level'))));
+      tr.addEventListener('mouseleave', clearValley);
+    });
+
+  })();
+
+  // === Scroll Reveal ===
+  (function() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  })();
+</script>
+</body>
+</html>
